@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeverSales - White Label Prototype</title>
+    <style>
+        /* CSS: O Design do Sistema (Modo Escuro: Preto, Grafite, Laranja e Branco) */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        /* Fundo principal da página (Preto/Cinza muito escuro) e texto branco */
+        body { background-color: #121212; color: #ffffff; overflow-x: hidden; }
+        
+        /* TELA DE LOGIN FALSificada */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0a0a0a; display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .login-box { background: #1e1e1e; padding: 40px; border-radius: 8px; width: 350px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.8); border: 1px solid #333; }
+        .login-box h2 { color: #ff6600; margin-bottom: 20px; } /* Laranja LeverSales */
+        .login-box input { width: 100%; padding: 12px; margin: 10px 0; background: #2d2d2d; border: 1px solid #444; border-radius: 4px; color: white; }
+        
+        /* Botões Laranjas */
+        .btn-orange { background: #ff6600; color: white; padding: 12px; width: 100%; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-orange:hover { background: #e65c00; }
+
+        /* SISTEMA PRINCIPAL (Inicia escondido) */
+        #main-system { display: none; display: flex; height: 100vh; }
+        
+        /* MENU LATERAL */
+        .sidebar { width: 250px; background: #0a0a0a; color: white; padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #222; }
+        .sidebar h2 { color: #ff6600; margin-bottom: 30px; text-align: center; font-size: 24px; }
+        .menu-item { padding: 15px; margin-bottom: 10px; border-radius: 4px; cursor: pointer; transition: 0.2s; color: #b3b3b3; }
+        /* Item selecionado no menu fica com uma barra lateral laranja */
+        .menu-item:hover, .menu-item.active { background: #1e1e1e; color: white; border-left: 4px solid #ff6600; }
+
+        /* ÁREA DE CONTEÚDO */
+        .content { flex: 1; padding: 40px; overflow-y: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px; }
+        
+        /* Caixas de conteúdo (Cards em Grafite) */
+        .card { background: #1e1e1e; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); margin-bottom: 30px; border: 1px solid #333; }
+        
+        /* FORMULÁRIO */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full { grid-column: span 2; }
+        label { font-weight: 600; margin-bottom: 5px; font-size: 14px; color: #ccc; }
+        
+        /* Campos de digitação escuros */
+        input { padding: 10px; background: #2d2d2d; border: 1px solid #444; border-radius: 4px; color: white; }
+        /* Muda a cor do ícone do calendário para aparecer no fundo escuro (apenas visual) */
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+        
+        /* TABELA */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #333; }
+        th { background-color: #2a2a2a; color: #ff6600; } /* Cabeçalho da tabela com texto Laranja */
+        
+        /* Emblema de Sincronizado */
+        .status-badge { background: #ff6600; color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <h2>LeverSales</h2>
+            <p style="color: #aaa; margin-bottom: 20px; font-size: 14px;">Acesse seu painel administrativo</p>
+            <input type="text" placeholder="E-mail" value="admin@leversales.com.br">
+            <input type="password" placeholder="Senha" value="123456">
+            <button class="btn-orange" onclick="entrarNoSistema()">Entrar no Sistema</button>
+        </div>
+    </div>
+
+    <div id="main-system" style="display: none;">
+        
+        <div class="sidebar">
+            <h2>LeverSales</h2>
+            <div class="menu-item active">📅 Agendamentos</div>
+            <div class="menu-item">👥 Clientes</div>
+            <div class="menu-item">⚙️ Configurações</div>
+            <div style="margin-top: auto;" class="menu-item" onclick="location.reload()">Sair da Conta</div>
+        </div>
+
+        <div class="content">
+            <div class="header">
+                <h1>Painel de Agendamentos</h1>
+                <p>Módulo de Integração: <strong style="color:#ff6600;">Google Calendar Ativo</strong></p>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #fff;">Novo Agendamento</h3>
+                <form id="formAgendamento">
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label>Nome do Cliente</label>
+                            <input type="text" id="nome" placeholder="Ex: Maria Oliveira" required>
+                        </div>
+                        <div class="form-group">
+                            <label>WhatsApp</label>
+                            <input type="text" id="telefone" placeholder="(11) 90000-0000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail</label>
+                            <input type="email" id="email" placeholder="maria@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Data de Início</label>
+                            <input type="datetime-local" id="data_inicio" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Data de Fim</label>
+                            <input type="datetime-local" id="data_fim" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-orange" style="margin-top: 20px;">Salvar e Enviar para Agenda 🚀</button>
+                    <p id="mensagem-status" style="margin-top: 15px; font-weight: bold; text-align: center;"></p>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 15px; color: #fff;">Últimos Registros</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Contato</th>
+                            <th>Início</th>
+                            <th>Status no Google</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-clientes">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para esconder o login e mostrar o sistema
+        function entrarNoSistema() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-system').style.display = 'flex';
+        }
+
+        // Função que lida com o formulário
+        document.getElementById('formAgendamento').addEventListener('submit', async function(evento) {
+            evento.preventDefault(); 
+            
+            const msgStatus = document.getElementById('mensagem-status');
+            const botao = document.querySelector('button[type="submit"]');
+            
+            botao.innerText = "Processando Integração...";
+            botao.style.background = "#555"; // Cinza enquanto carrega
+            msgStatus.innerText = "";
+
+            // 1. Coleta os dados
+            const nome = document.getElementById('nome').value;
+            const telefone = document.getElementById('telefone').value;
+            const email = document.getElementById('email').value;
+            const dataInicio = document.getElementById('data_inicio').value;
+            const dataFim = document.getElementById('data_fim').value;
+
+            const pacoteDeDados = {
+                nome: nome,
+                telefone: telefone,
+                email: email,
+                data_inicio: dataInicio + ':00-03:00', // Formata para o Google
+                data_fim: dataFim + ':00-03:00'
+            };
+
+            try {
+                // 2. Envia para a nossa Ponte Node.js Real
+                const resposta = await fetch('http://localhost:3000/receber-agendamento', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(pacoteDeDados)
+                });
+
+                if (resposta.ok) {
+                    // 3. Atualiza a tela se deu certo (agora com cor laranja no sucesso)
+                    msgStatus.innerText = "✅ Sucesso! Evento sincronizado com o Google Agendas.";
+                    msgStatus.style.color = "#ff6600"; 
+                    
+                    // Adiciona o cliente na nossa Tabela Falsa
+                    adicionarNaTabela(nome, telefone, dataInicio);
+                    
+                    // Limpa o formulário
+                    document.getElementById('formAgendamento').reset();
+                } else {
+                    msgStatus.innerText = "❌ Erro ao enviar para a Agenda.";
+                    msgStatus.style.color = "#ff3333"; // Vermelho claro para erro no fundo escuro
+                }
+            } catch (erro) {
+                msgStatus.innerText = "⚠️ Erro de conexão! O Servidor Node.js está ligado no terminal?";
+                msgStatus.style.color = "#ff3333";
+            } finally {
+                // Restaura o botão para o estado original
+                botao.innerText = "Salvar e Enviar para Agenda 🚀";
+                botao.style.background = "#ff6600";
+            }
+        });
+
+        // Função para atualizar visualmente a tabela
+        function adicionarNaTabela(nome, telefone, data) {
+            const tabela = document.getElementById('tabela-clientes');
+            const dataFormatada = new Date(data).toLocaleString('pt-BR'); 
+
+            const novaLinha = `
+                <tr>
+                    <td><strong style="color: #fff;">${nome}</strong></td>
+                    <td style="color: #ccc;">${telefone}</td>
+                    <td style="color: #ccc;">${dataFormatada}</td>
+                    <td><span class="status-badge">Sincronizado</span></td>
+                </tr>
+            `;
+            // Insere no topo da tabela
+            tabela.innerHTML = novaLinha + tabela.innerHTML;
+        }
+    </script>
+</body>
+</html>
